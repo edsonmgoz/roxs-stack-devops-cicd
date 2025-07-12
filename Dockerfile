@@ -1,6 +1,5 @@
 FROM node:22-alpine
 
-
 LABEL maintainer="RoxsRoss <roxsross@devops.com>" \
       org.opencontainers.image.authors="RoxsRoss <roxsross@devops.com>" \
       org.opencontainers.image.description="Roxs Stack DevOps CI/CD - Development Environment" \
@@ -8,10 +7,8 @@ LABEL maintainer="RoxsRoss <roxsross@devops.com>" \
 
 WORKDIR /app
 
-
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S roxsapp -u 1001
-
 
 COPY package*.json ./
 RUN npm ci --only=development && npm cache clean --force

@@ -8,9 +8,37 @@ on:
 
 jobs:
 
-  build:
+  init:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+    - name: Lista directorio
+      run: ls -la
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Lista directorio
+      run: |
+        echo "Ejecutando pruebas"
+        ls -la
+        echo "Pruebas completadas"    
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [init, test]
+    steps:
+    - uses: actions/checkout@v4
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+    - uses: actions/checkout@v4
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: [deploy]
+    steps:
+    - uses: actions/checkout@v4
