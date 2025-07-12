@@ -1,10 +1,16 @@
 # 🚀 Roxs Stack DevOps CI/CD - Proyecto Completo de Pipeline
 
-[![CI/CD Pipeline](https://github.com/roxsross/devops-roxs-pipeline/actions/workflows/main.yml/badge.svg)](https://github.com/roxsross/devops-roxs-pipeline/actions)
 [![Docker Hub](https://img.shields.io/docker/pulls/roxsross12/roxs-stack-devops-cicd)](https://hub.docker.com/r/roxsross12/roxs-stack-devops-cicd)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D21.0.0-brightgreen.svg)](https://nodejs.org/)
 [![GitHub](https://img.shields.io/github/followers/roxsross?label=GitHub&style=social)](https://github.com/roxsross)
-[![Docker Build](https://img.shields.io/docker/cloud/build/roxsross12/roxs-stack-devops-cicd)](https://hub.docker.com/r/roxsross12/roxs-stack-devops-cicd)
+
+[![Build Status](https://img.shields.io/github/actions/workflow/status/roxsross/devops-roxs-node-github/ci.yml?branch=main&label=CI%20Status)](https://github.com/roxsross/devops-roxs-node-github/actions)
+[![Coverage Status](https://img.shields.io/coveralls/github/roxsross/devops-roxs-node-github/main?label=Coverage)](https://coveralls.io/github/roxsross/devops-roxs-node-github)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Last Commit](https://img.shields.io/github/last-commit/roxsross/devops-roxs-node-github)](https://github.com/roxsross/devops-roxs-node-github/commits/main)
+[![Issues](https://img.shields.io/github/issues/roxsross/devops-roxs-node-github)](https://github.com/roxsross/devops-roxs-node-github/issues)
+[![Stars](https://img.shields.io/github/stars/roxsross/devops-roxs-node-github?style=social)](https://github.com/roxsross/devops-roxs-node-github/stargazers)
+
 ## 📋 Descripción
 
 ![](./images/web.png)
