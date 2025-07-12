@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roxs Stack DevOps CI/CD - Complete Pipeline Project</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+        }
+        
+        .gradient-bg {
+            background: var(--primary-gradient);
+            min-height: 100vh;
+        }
+        
+        .card-custom {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            border-radius: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card-custom:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-healthy {
+            background-color: var(--success-color);
+        }
+        
+        .status-warning {
+            background-color: var(--warning-color);
+        }
+        
+        .status-error {
+            background-color: var(--danger-color);
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        .metric-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .nav-custom {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn-gradient {
+            background: var(--primary-gradient);
+            border: none;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            color: white;
+        }
+        
+        .hero-section {
+            padding: 4rem 0;
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+        
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+        }
+        
+        .api-endpoint {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-left: 4px solid var(--primary-gradient);
+        }
+        
+        .response-preview {
+            background: #1e1e1e;
+            color: #f8f8f2;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body class="gradient-bg">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark nav-custom">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="bi bi-rocket-takeoff"></i> Roxs Stack DevOps CI/CD
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#api-testing">API Testing</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#monitoring">Monitoring</a>
+                    </li>
+                </ul>
+                <span class="navbar-text">
+                    <span class="status-indicator status-healthy"></span>
+                    <span id="app-version">v1.0.0</span> | 
+                    <span id="app-environment">Development</span>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <div class="card card-custom">
+                        <div class="card-body py-5">
+                            <i class="bi bi-rocket-takeoff text-primary feature-icon"></i>
+                            <h1 class="card-title display-4 fw-bold mb-4">🚀 Roxs Stack DevOps CI/CD</h1>
+                            <p class="lead mb-4">
+                                Complete DevOps Pipeline with Node.js, Express, Docker, GitHub Actions 
+                                and automated Telegram notifications
+                            </p>
+                            <div class="mt-4">
+                                <button class="btn btn-outline-light btn-lg" onclick="testAPI()">
+                                    <i class="bi bi-api"></i> Test API
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Section -->
+    <section id="dashboard" class="py-5">
+        <div class="container">
+            <h2 class="text-white text-center mb-5">
+                <i class="bi bi-speedometer2"></i> Live Dashboard
+            </h2>
+            
+            <!-- Real-time Metrics -->
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                    <div class="card metric-card card-custom text-center h-100">
+                        <div class="card-body">
+                            <i class="bi bi-heart-pulse text-success" style="font-size: 2.5rem;"></i>
+                            <h6 class="card-title mt-2">Health Status</h6>
+                            <span class="badge bg-success fs-6" id="health-status">Healthy</span>
+                            <div class="mt-2">
+                                <small class="text-muted" id="uptime-display">Uptime: --</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card metric-card card-custom text-center h-100">
+                        <div class="card-body">
+                            <i class="bi bi-graph-up-arrow text-primary" style="font-size: 2.5rem;"></i>
+                            <h6 class="card-title mt-2">Total Requests</h6>
+                            <span class="h4 text-primary" id="total-requests">0</span>
+                            <div class="mt-2">
+                                <small class="text-muted">Success: <span id="success-rate">100%</span></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card metric-card card-custom text-center h-100">
+                        <div class="card-body">
+                            <i class="bi bi-speedometer text-info" style="font-size: 2.5rem;"></i>
+                            <h6 class="card-title mt-2">Avg Response</h6>
+                            <span class="h4 text-info" id="avg-response">0ms</span>
+                            <div class="mt-2">
+                                <small class="text-muted">RPM: <span id="requests-per-minute">0</span></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card metric-card card-custom text-center h-100">
+                        <div class="card-body">
+                            <i class="bi bi-memory text-warning" style="font-size: 2.5rem;"></i>
+                            <h6 class="card-title mt-2">Memory Usage</h6>
+                            <span class="h4 text-warning" id="memory-usage">0%</span>
+                            <div class="mt-2">
+                                <small class="text-muted" id="memory-details">-- MB / -- MB</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="card card-custom">
+                        <div class="card-header">
+                            <h5><i class="bi bi-graph-up"></i> Performance Metrics</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="performanceChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="card card-custom">
+                        <div class="card-header">
+                            <h5><i class="bi bi-pie-chart"></i> Request Status</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="statusChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- API Testing Section -->
+    <section id="api-testing" class="py-5">
+        <div class="container">
+            <h2 class="text-white text-center mb-5">
+                <i class="bi bi-code-slash"></i> API Testing Center
+            </h2>
+            
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="card card-custom">
+                        <div class="card-header">
+                            <h5><i class="bi bi-terminal"></i> Interactive API Testing</h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- Quick Actions -->
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <h6>Quick Tests:</h6>
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-outline-primary" onclick="testEndpoint('/health')">
+                                            <i class="bi bi-heart-pulse"></i> Health Check
+                                        </button>
+                                        <button class="btn btn-outline-info" onclick="testEndpoint('/api/status')">
+                                            <i class="bi bi-info-circle"></i> API Status
+                                        </button>
+                                        <button class="btn btn-outline-success" onclick="testEndpoint('/api/metrics')">
+                                            <i class="bi bi-graph-up"></i> Metrics
+                                        </button>
+                                        <button class="btn btn-outline-warning" onclick="testEndpoint('/api/version')">
+                                            <i class="bi bi-tag"></i> Version Info
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Data Operations:</h6>
+                                    <div class="input-group mb-2">
+                                        <input type="text" class="form-control" id="dataContent" placeholder="Enter data content...">
+                                        <button class="btn btn-success" onclick="createData()">
+                                            <i class="bi bi-plus-circle"></i> Create
+                                        </button>
+                                    </div>
+                                    <div class="input-group mb-2">
+                                        <input type="text" class="form-control" id="userName" placeholder="User name...">
+                                        <input type="email" class="form-control" id="userEmail" placeholder="User email...">
+                                        <button class="btn btn-primary" onclick="createUser()">
+                                            <i class="bi bi-person-plus"></i> Add User
+                                        </button>
+                                    </div>
+                                    <button class="btn btn-outline-secondary w-100" onclick="seedTestData()">
+                                        <i class="bi bi-database-add"></i> Seed Test Data
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Custom Request -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h6>Custom Request:</h6>
+                                    <div class="input-group">
+                                        <select class="form-select" id="requestMethod" style="max-width: 120px;">
+                                            <option value="GET">GET</option>
+                                            <option value="POST">POST</option>
+                                            <option value="PUT">PUT</option>
+                                            <option value="DELETE">DELETE</option>
+                                        </select>
+                                        <input type="text" class="form-control" id="customEndpoint" placeholder="/api/endpoint">
+                                        <button class="btn btn-primary" onclick="customRequest()">
+                                            <i class="bi bi-send"></i> Send
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Response Display -->
+                            <div class="row">
+                                <div class="col-12">
+                                    <h6>Response:</h6>
+                                    <div class="response-preview" id="apiResponse">
+                                        Click any button above to test the API endpoints...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Monitoring Section -->
+    <section id="monitoring" class="py-5">
+        <div class="container">
+            <h2 class="text-white text-center mb-5">
+                <i class="bi bi-activity"></i> System Monitoring
+            </h2>
+            
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <div class="card card-custom">
+                        <div class="card-header">
+                            <h5><i class="bi bi-cpu"></i> System Info</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="system-info">
+                                <div class="mb-2">
+                                    <strong>Platform:</strong> <span id="platform">--</span>
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Architecture:</strong> <span id="architecture">--</span>
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Node Version:</strong> <span id="node-version">--</span>
+                                </div>
+                                <div class="mb-2">
+                                    <strong>CPU Cores:</strong> <span id="cpu-cores">--</span>
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Total Memory:</strong> <span id="total-memory">--</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 mb-4">
+                    <div class="card card-custom">
+                        <div class="card-header">
+                            <h5><i class="bi bi-clock-history"></i> Recent Activity</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="recent-requests" style="max-height: 250px; overflow-y: auto;">
+                                Loading recent activity...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 mb-4">
+                    <div class="card card-custom">
+                        <div class="card-header">
+                            <h5><i class="bi bi-links"></i> Quick Links</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <a href="/docs" class="btn btn-outline-primary" target="_blank">
+                                    <i class="bi bi-book"></i> API Documentation
+                                </a>
+                                <a href="/health/detailed" class="btn btn-outline-info" target="_blank">
+                                    <i class="bi bi-heart-pulse"></i> Detailed Health
+                                </a>
+                                <button class="btn btn-outline-warning" onclick="downloadLogs()">
+                                    <i class="bi bi-download"></i> Download Logs
+                                </button>
+                                <button class="btn btn-outline-danger" onclick="clearCache()">
+                                    <i class="bi bi-trash"></i> Clear Cache
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-4 bg-dark text-light">
+        <div class="container text-center">
+            <p class="mb-2">
+                <i class="bi bi-rocket-takeoff"></i> 
+                Made with ❤️ by <strong>RoxsRoss</strong> | 
+                Roxs Stack DevOps CI/CD Project
+            </p>
+            <p class="mb-0">
+                <span id="footer-version">v1.0.0</span> | 
+                <span id="footer-environment">Development</span> | 
+                <span id="footer-uptime">Uptime: --</span>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Toast Container -->
+    <div class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/api-testing.js"></script>
+    <script src="js/monitoring.js"></script>
+</body>
+</html>
