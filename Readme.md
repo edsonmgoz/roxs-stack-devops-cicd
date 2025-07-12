@@ -1,11 +1,13 @@
 # 🚀 Roxs Stack DevOps CI/CD - Proyecto Completo de Pipeline
 
-[![CI/CD Pipeline](https://github.com/roxsross/roxs-stack-devops-cicd/workflows/Main%20CI/CD%20Pipeline/badge.svg)](https://github.com/roxsross/roxs-stack-devops-cicd/actions)
-[![Docker Hub](https://img.shields.io/docker/pulls/roxsross/roxs-stack-devops-cicd)](https://hub.docker.com/r/roxsross/roxs-stack-devops-cicd)
-[![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-
+[![CI/CD Pipeline](https://github.com/roxsross/devops-roxs-pipeline/actions/workflows/main.yml/badge.svg)](https://github.com/roxsross/devops-roxs-pipeline/actions)
+[![Docker Hub](https://img.shields.io/docker/pulls/roxsross12/roxs-stack-devops-cicd)](https://hub.docker.com/r/roxsross12/roxs-stack-devops-cicd)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D21.0.0-brightgreen.svg)](https://nodejs.org/)
+[![GitHub](https://img.shields.io/github/followers/roxsross?label=GitHub&style=social)](https://github.com/roxsross)
+[![Docker Build](https://img.shields.io/docker/cloud/build/roxsross12/roxs-stack-devops-cicd)](https://hub.docker.com/r/roxsross12/roxs-stack-devops-cicd)
 ## 📋 Descripción
+
+![](./images/web.png)
 
 Stack DevOps completo demostrando mejores prácticas de CI/CD usando:
 - **Node.js + Express** como framework backend
@@ -20,7 +22,10 @@ Stack DevOps completo demostrando mejores prácticas de CI/CD usando:
 - **Calidad de código** con ESLint y Prettier
 - **Monitoreo de performance** con métricas avanzadas
 
+![](./images/diagrama.png)
+
 ## 🏗️ Arquitectura del Proyecto
+
 
 ```
 roxs-stack-devops-cicd/
