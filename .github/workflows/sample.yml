@@ -34,3 +34,15 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
+
+  sumary:
+    runs-on: ubuntu-latest
+    name: Simple sumary
+    needs: [Job1, Job2]
+    steps:
+      - name: Resumen
+      - run: |
+          echo "Resumen del Deploy" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** ✅ OK" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment" Producción">> $GITHUB_STEP_SUMMARY
+          echo "**TIME** $(date)" >> $GITHUB_STEP_SUMMARY
