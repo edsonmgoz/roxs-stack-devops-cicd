@@ -1,22 +1,27 @@
-FROM node:22-alpine
+#etapabuild
 
+FROM node:22-alpine AS builder
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci --only=development && npm cache clean --force
+
+#etapa final
+FROM node:22-alpine
 LABEL maintainer="RoxsRoss <roxsross@devops.com>" \
       org.opencontainers.image.authors="RoxsRoss <roxsross@devops.com>" \
       org.opencontainers.image.description="Roxs Stack DevOps CI/CD - Development Environment" \
       org.opencontainers.image.version="1.0.0"
 
 WORKDIR /app
-
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S roxsapp -u 1001
 
-COPY package*.json ./
-RUN npm ci --only=development && npm cache clean --force
-
-COPY --chown=roxsapp:nodejs . .
-
+COPY --from=builder /app /app
 RUN mkdir -p /app/logs && \
     chown -R roxsapp:nodejs /app
+COPY --chown=roxsapp:nodejs . .
 
 USER roxsapp
 
