@@ -22,6 +22,7 @@ jobs:
   Job2:
     runs-on: ubuntu-latest
     name: Job para testing
+    needs: Job1
     if: ${{ github.ref == 'refs/heads/testing' }}
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
