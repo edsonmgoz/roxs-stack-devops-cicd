@@ -44,5 +44,5 @@ jobs:
         run: |
           echo "Resumen del Deploy" >> $GITHUB_STEP_SUMMARY
           echo "**Status:** ✅ OK" >> $GITHUB_STEP_SUMMARY
-          echo "**Environment" Producción">> $GITHUB_STEP_SUMMARY
+          echo "**Environment Producción">> $GITHUB_STEP_SUMMARY
           echo "**TIME** $(date)" >> $GITHUB_STEP_SUMMARY
