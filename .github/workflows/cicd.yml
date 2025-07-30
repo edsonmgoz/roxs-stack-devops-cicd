@@ -11,18 +11,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Listar directorio
-      run: ls -la
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '21'
+    - name: Instalar dependencias
+      run: |
+        echo "Instalando dependencias"
+        npm install
+        echo "Dependencias instaladas"
 
   test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Listar directorio
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '21'
+    - name: Run tests
       run: |
-        echo "Ejecutando pruebas"
-        ls -la
-        echo "Pruebas completadas"
+        echo "Corriendo tests"
+        npm install
+        npm test
+        echo "Tests completados"
 
   build:
     runs-on: ubuntu-latest
